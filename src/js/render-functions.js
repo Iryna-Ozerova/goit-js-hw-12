@@ -35,13 +35,27 @@ export function updateGallery(images) {
   const gallery = document.querySelector('.gallery');
   gallery.insertAdjacentHTML('beforeend', createImageMarkup(images));
   lightbox.refresh(); // Оновлюємо SimpleLightbox після додавання нових зображень
+  smoothScroll(); // додаємо скролл
 }
 
-// Функція для показу повідомлення про помилку
 export function showNoResultsMessage(message) {
   iziToast.error({
     title: 'Error',
     message: message,
     position: 'topRight',
   });
+}
+
+export function smoothScroll() {
+  const firstCard = document.querySelector('.gallery-item'); 
+
+  if (firstCard) {
+    const cardHeight = firstCard.getBoundingClientRect().height; 
+
+    window.scrollBy({
+      top: cardHeight * 2,
+      left: 0,
+      behavior: "smooth",
+    });
+  }
 }

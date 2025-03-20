@@ -1,17 +1,19 @@
 import { searchImages, resetPage } from './js/pixabay-api.js';
 import { updateGallery, showNoResultsMessage } from './js/render-functions.js';
+import { smoothScroll } from './js/render-functions.js';
 
 const form = document.querySelector('.form');
 const input = document.querySelector('.input-search');
 const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 const loaderMore = document.querySelector('.loader-load');
+const endLoader = document.querySelector('.loader-end');
 const btnLoad = document.querySelector('.btn-load');
-
 
 loader.style.display = 'none';
 btnLoad.style.display = 'none';
 loaderMore.style.display = 'none'; // приховуємо loaderMore
+endLoader.style.display = 'none';
 
 form.addEventListener('submit', function (event) {
     event.preventDefault();
@@ -23,21 +25,23 @@ form.addEventListener('submit', function (event) {
     return;
   }
     
-    resetPage(); // скидаємо page при новому пошуку
-    gallery.innerHTML = ''; // очищаємо галерею перед новим пошуком
-    btnLoad.style.display = 'none'; //приховуємо btnLoad при повторному сабміті
+    resetPage();
+    gallery.innerHTML = ''; 
+    btnLoad.style.display = 'none';
     loader.style.display = 'block'; 
     
 
   searchImages(query)
     .then(images => {
-        loader.style.display = 'none'; 
-      if (images.length === 0) {
+      loader.style.display = 'none'; 
+      
+      if (images.length === 0) { 
         showNoResultsMessage('Sorry, there are no images matching your search query. Please try again!');
+        endLoader.style.display = 'block';
         return;
       }
         updateGallery(images);
-        btnLoad.style.display = 'block'; // показуємо кнопку, якщо є результат
+        btnLoad.style.display = 'block';
     })
       .catch(error => {
         loader.style.display = 'none';
@@ -45,30 +49,30 @@ form.addEventListener('submit', function (event) {
       console.error('Помилка сервера:', error.message);
     });
   form.reset();
-});
+  });
+  
 
 //подія на btnLoad
 
-btnLoad.addEventListener('click', () => {
-    loaderMore.style.display = 'block'; // Показуємо лоадер
+btnLoad.addEventListener('click', async () => {
+    loaderMore.style.display = 'block'; 
      btnLoad.style.display = 'none';
     
-    searchImages(input.value.trim())
+  await searchImages(input.value.trim())
         .then(images => {
-        setTimeout(() => { // додаємо затримку для лоадера
             loaderMore.style.display = 'none';
 
             if (images.length === 0) {
-                btnLoad.style.display = 'none'; // Ховаємо кнопку, якщо більше немає зображень
+                btnLoad.style.display = 'none';
                 showNoResultsMessage("We're sorry, but you've reached the end of search results.");
                 return;
             }
 
-            updateGallery(images);
+          updateGallery(images);
+          smoothScroll();
             btnLoad.style.display = 'block';
-        }, 100); // штучна затримка для перевірки лоадера
     }).catch(error => {
-        loaderMore.style.display = 'none'; // Ховаємо лоадер у разі помилки
+        loaderMore.style.display = 'none'; 
         showNoResultsMessage('Error loading more images.');
         console.error('Помилка сервера:', error.message);
     });

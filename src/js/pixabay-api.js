@@ -3,9 +3,8 @@ import axios from 'axios';
 
 const API_KEY = '49186769-dabefba962826c776b77806d1';
 const BASE_URL = 'https://pixabay.com/api/';
-let PER_PAGE = 15; //ліміт по зображенням
-let page = 1; // початкове значення сторінки
-let totalHits = 0; // загальна к-сть результатів
+let PER_PAGE = 15;
+let page = 1;
 
 // функція для отримання зображень
 export async function searchImages(query) {
@@ -29,6 +28,8 @@ export async function searchImages(query) {
         return [];
     }
 }
+
+
 
 // повертаємо значення page до початкового
 export function resetPage() {
