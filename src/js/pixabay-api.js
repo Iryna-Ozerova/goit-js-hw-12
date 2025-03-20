@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const API_KEY = '49186769-dabefba962826c776b77806d1';
 const BASE_URL = 'https://pixabay.com/api/';
-let PER_PAGE = 15;
+let PER_PAGE = 60;
 let page = 1;
 
 // функція для отримання зображень

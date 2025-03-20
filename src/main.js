@@ -12,7 +12,6 @@ const btnLoad = document.querySelector('.btn-load');
 loader.style.display = 'none';
 btnLoad.style.display = 'none';
 loaderMore.style.display = 'none'; // приховуємо loaderMore
-endLoader.style.display = 'none';
 
 form.addEventListener('submit', function (event) {
     event.preventDefault();
