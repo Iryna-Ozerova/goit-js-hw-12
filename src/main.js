@@ -7,7 +7,6 @@ const input = document.querySelector('.input-search');
 const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 const loaderMore = document.querySelector('.loader-load');
-const endLoader = document.querySelector('.loader-end');
 const btnLoad = document.querySelector('.btn-load');
 
 loader.style.display = 'none';
@@ -37,7 +36,6 @@ form.addEventListener('submit', function (event) {
       
       if (images.length === 0) { 
         showNoResultsMessage('Sorry, there are no images matching your search query. Please try again!');
-        endLoader.style.display = 'block';
         return;
       }
         updateGallery(images);
