@@ -42,7 +42,7 @@ form.addEventListener('submit', function (event) {
         return;
       }
         updateGallery(images);
-        btnLoad.style.display = 'block';
+      btnLoad.style.display = 'block';
     })
       .catch(error => {
         loader.style.display = 'none';
@@ -71,7 +71,8 @@ btnLoad.addEventListener('click', async () => {
 
           updateGallery(images);
           smoothScroll();
-            btnLoad.style.display = 'block';
+          btnLoad.style.display = 'block';
+          
     }).catch(error => {
         loaderMore.style.display = 'none'; 
         showNoResultsMessage('Error loading more images.');
