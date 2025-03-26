@@ -13,6 +13,8 @@ loader.style.display = 'none';
 btnLoad.style.display = 'none';
 loaderMore.style.display = 'none'; // приховуємо loaderMore
 
+let currentQuery = ''; // запам'ятовуємо пошуковий запит
+
 form.addEventListener('submit', function (event) {
     event.preventDefault();
 
@@ -26,10 +28,12 @@ form.addEventListener('submit', function (event) {
     resetPage();
     gallery.innerHTML = ''; 
     btnLoad.style.display = 'none';
-    loader.style.display = 'block'; 
+  loader.style.display = 'block'; 
+  
+  currentQuery = query; // зберігаємо запит перед очищенням поля
     
 
-  searchImages(query)
+  searchImages(currentQuery)
     .then(images => {
       loader.style.display = 'none'; 
       
@@ -52,10 +56,10 @@ form.addEventListener('submit', function (event) {
 //подія на btnLoad
 
 btnLoad.addEventListener('click', async () => {
+  if (currentQuery === '') return;
     loaderMore.style.display = 'block'; 
      btnLoad.style.display = 'none';
-    
-  await searchImages(input.value.trim())
+  await searchImages(currentQuery) // збережений запит 
         .then(images => {
             loaderMore.style.display = 'none';
 
