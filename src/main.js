@@ -11,73 +11,90 @@ const btnLoad = document.querySelector('.btn-load');
 
 loader.style.display = 'none';
 btnLoad.style.display = 'none';
-loaderMore.style.display = 'none'; // приховуємо loaderMore
+loaderMore.style.display = 'none'; 
 
-let currentQuery = ''; // запам'ятовуємо пошуковий запит
+let currentQuery = ''; 
+let totalHits = 0; 
+let imagesLoaded = 0; 
 
 form.addEventListener('submit', function (event) {
     event.preventDefault();
 
     const query = input.value.trim();
     
-  if (query === '') {
-    showNoResultsMessage('Please enter a search query!');
-    return;
-  }
-    
+    if (query === '') {
+        showNoResultsMessage('Please enter a search query!');
+        return;
+    }
+
     resetPage();
     gallery.innerHTML = ''; 
     btnLoad.style.display = 'none';
-  loader.style.display = 'block'; 
-  
-  currentQuery = query; // зберігаємо запит перед очищенням поля
+    loader.style.display = 'block'; 
+
+    currentQuery = query;
     
+    searchImages(currentQuery)
+        .then(({ images, totalHits: hits }) => {
+            loader.style.display = 'none'; 
+            
+            if (images.length === 0) { 
+                showNoResultsMessage('Sorry, there are no images matching your search query. Please try again!');
+                return;
+            }
 
-  searchImages(currentQuery)
-    .then(images => {
-      loader.style.display = 'none'; 
-      
-      if (images.length === 0) { 
-        showNoResultsMessage('Sorry, there are no images matching your search query. Please try again!');
-        return;
-      }
-        updateGallery(images);
-      btnLoad.style.display = 'block';
-    })
-      .catch(error => {
-        loader.style.display = 'none';
-      showNoResultsMessage('Error fetching images. Please try again!');
-      console.error('Помилка сервера:', error.message);
-    });
-  form.reset();
-  });
-  
+            totalHits = hits; 
+            imagesLoaded = images.length; 
 
-//подія на btnLoad
+            updateGallery(images);
 
+            if (imagesLoaded < totalHits) {
+                btnLoad.style.display = 'block';
+            } else {
+              btnLoad.style.display = 'none'; // Якщо тільки 1 фото, ховаємо кнопку
+             showNoResultsMessage("We're sorry, but you've reached the end of search results.");
+            }
+        })
+        .catch(error => {
+            loader.style.display = 'none';
+            showNoResultsMessage('Error fetching images. Please try again!');
+            console.error('Помилка сервера:', error.message);
+        });
+
+    form.reset();
+});
+
+// Завантаження додаткових фото
 btnLoad.addEventListener('click', async () => {
-  if (currentQuery === '') return;
+    if (currentQuery === '') return;
+
     loaderMore.style.display = 'block'; 
-     btnLoad.style.display = 'none';
-  await searchImages(currentQuery) // збережений запит 
-        .then(images => {
+    btnLoad.style.display = 'none';
+
+    await searchImages(currentQuery)
+        .then(({ images }) => {
             loaderMore.style.display = 'none';
 
             if (images.length === 0) {
-                btnLoad.style.display = 'none';
                 showNoResultsMessage("We're sorry, but you've reached the end of search results.");
                 return;
             }
 
-          updateGallery(images);
-          smoothScroll();
-          btnLoad.style.display = 'block';
-          
-    }).catch(error => {
-        loaderMore.style.display = 'none'; 
-        showNoResultsMessage('Error loading more images.');
-        console.error('Помилка сервера:', error.message);
-    });
+            updateGallery(images);
+            smoothScroll();
+
+            imagesLoaded += images.length; 
+            
+            if (imagesLoaded >= totalHits) {
+              btnLoad.style.display = 'none';
+               showNoResultsMessage("We're sorry, but you've reached the end of search results.");
+            } else {
+                btnLoad.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            loaderMore.style.display = 'none'; 
+            showNoResultsMessage('Error loading more images.');
+            console.error('Помилка сервера:', error.message);
+        });
 });
-
-
